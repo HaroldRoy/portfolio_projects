@@ -206,6 +206,20 @@ FROM portfolio_project..covid_deaths AS cd
 	AND cd.date = cv.date
 WHERE cd.continent IS NOT NULL;
 
+CREATE VIEW RollingPeopleVac AS
+SELECT cd.continent,
+		cd.location,
+		cd.date, 
+		cd.population,
+		cv.new_vaccinations,
+		SUM(CAST(cv.new_vaccinations AS bigint)) OVER (PARTITION BY cd.location ORDER BY cd.location, cd.date) as rolling_people_vac
+		--,(rolling_people_vac/population)*100
+FROM portfolio_project..covid_deaths AS cd
+	JOIN portfolio_project..covid_vaccinations AS cv
+	ON cd.location = cv.location
+	AND cd.date = cv.date
+WHERE cd.continent IS NOT NULL
+--ORDER BY 2, 3;
 
 
 
