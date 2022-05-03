@@ -14,7 +14,7 @@ FROM portfolio_project..nashville_housing;
 --Standardize Date Format
 
 SELECT  SaleDate, 
-		CONVERT(date, SaleDate)
+	CONVERT(date, SaleDate)
 FROM portfolio_project..nashville_housing;
 
 Update nashville_housing
@@ -29,7 +29,7 @@ Update nashville_housing
 SET SaleDate2 = CONVERT(date, SaleDate);
 
 SELECT  SaleDate,
-		SaleDate2
+	SaleDate2
 FROM portfolio_project..nashville_housing;
 
 
@@ -44,12 +44,12 @@ ORDER BY ParcelID;
 
 
 SELECT  ori.[UniqueID ],
-		rep.[UniqueID ],
-		ori.ParcelID,
-		rep.ParcelID,
-		ori.PropertyAddress,
-		rep.PropertyAddress,
-		ISNULL(ori.PropertyAddress, rep.PropertyAddress)
+	rep.[UniqueID ],
+	ori.ParcelID,
+	rep.ParcelID,
+	ori.PropertyAddress,
+	rep.PropertyAddress,
+	ISNULL(ori.PropertyAddress, rep.PropertyAddress)
 FROM portfolio_project..nashville_housing AS ori
 JOIN portfolio_project..nashville_housing AS rep
 	ON ori.ParcelID = rep.ParcelID
@@ -70,8 +70,8 @@ WHERE ori.PropertyAddress IS NULL;
 --Breaking out Address into Individual Columns(Address, City, State)
 
 SELECT  PropertyAddress,
-		SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1) AS address_clean,
-		SUBSTRING(PropertyAddress, CHARINDEX(',',PropertyAddress) + 1, LEN(PropertyAddress)) AS city
+	SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1) AS address_clean,
+	SUBSTRING(PropertyAddress, CHARINDEX(',',PropertyAddress) + 1, LEN(PropertyAddress)) AS city
 FROM portfolio_project..nashville_housing;
 
 ALTER TABLE nashville_housing
@@ -87,17 +87,17 @@ Update nashville_housing
 SET PropertyAddressCity = SUBSTRING(PropertyAddress, CHARINDEX(',',PropertyAddress) + 1, LEN(PropertyAddress))
 
 SELECT  PropertyAddress,
-		PropertyAddressClean,
-		PropertyAddressCity
+	PropertyAddressClean,
+	PropertyAddressCity
 FROM portfolio_project..nashville_housing;
 
 
 --Using alternative method with the OwnerAddress
 
 SELECT  OwnerAddress,
-		PARSENAME(REPLACE(OwnerAddress,',','.'), 3),
-		PARSENAME(REPLACE(OwnerAddress,',','.'), 2),
-		PARSENAME(REPLACE(OwnerAddress,',','.'), 1)
+	PARSENAME(REPLACE(OwnerAddress,',','.'), 3),
+	PARSENAME(REPLACE(OwnerAddress,',','.'), 2),
+	PARSENAME(REPLACE(OwnerAddress,',','.'), 1)
 FROM portfolio_project..nashville_housing;
 
 ALTER TABLE nashville_housing
@@ -120,9 +120,9 @@ SET OwnerState = PARSENAME(REPLACE(OwnerAddress,',','.'), 1);
 
 
 SELECT  OwnerAddress,
-		OwnerAddressClean,
-		OwnerCity,
-		OwnerState
+	OwnerAddressClean,
+	OwnerCity,
+	OwnerState
 FROM portfolio_project..nashville_housing;
 
 
@@ -131,7 +131,7 @@ FROM portfolio_project..nashville_housing;
 --Change Y and N to Yes and No in "Sold as Vacant" field
 
 Select  Distinct(SoldAsVacant),
-		Count(SoldAsVacant)
+	Count(SoldAsVacant)
 FROM portfolio_project..nashville_housing
 GROUP BY SoldAsVacant
 ORDER BY 2;
@@ -139,10 +139,10 @@ ORDER BY 2;
 
 
 SELECT  SoldAsVacant,
-		CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
-			 WHEN SoldAsVacant = 'N' THEN 'No'
-			 ELSE SoldASVacant
-			 END
+	CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
+	     WHEN SoldAsVacant = 'N' THEN 'No'
+	     ELSE SoldASVacant
+	     END
 FROM portfolio_project..nashville_housing;
 
 Update nashville_housing
@@ -158,13 +158,13 @@ SET SoldAsVacant = CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
 
 WITH row_num_cte AS(
 SELECT  *,
-		ROW_NUMBER() OVER (
-			PARTITION BY ParcelID,
-						 PropertyAddress,
-						 SalePrice,
-						 SaleDate,
-						 LegalReference
-			ORDER BY UniqueID
+	ROW_NUMBER() OVER (
+		PARTITION BY ParcelID,
+			     PropertyAddress,
+			     SalePrice,
+			     SaleDate,
+			     LegalReference
+		ORDER BY UniqueID
 ) AS row_num							
 FROM portfolio_project..nashville_housing
 --ORDER BY ParcelID
@@ -184,6 +184,6 @@ FROM portfolio_project..nashville_housing
 
 ALTER TABLE portfolio_project..nashville_housing
 DROP COLUMN OwnerAddress,
-			TaxDistric,
-			PropertyAddress,
-			SaleDate;
+	    TaxDistric,
+	    PropertyAddress,
+	    SaleDate;
